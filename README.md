@@ -40,6 +40,7 @@ function startPouchDbServer() {
 
     var app = express();
     app.use(pouchApp);
+
     return app.listen(5984);
 };
 ```
@@ -60,7 +61,7 @@ library for CouchDB/PouchDB. I'll explain some steps.
 var name = 'example_db';
 nano.db.get(name, function(err, body) {
     if (err) {
-        nano.db.create(name, function(err, body) { /*Defer or call callback*/ });
+        nano.db.create(name, function(err, body) { /* Resolve promise or call callback */ });
     }
 });
 ```
@@ -86,10 +87,21 @@ var exampleDb = nano.db.use('example_db');
 
 exampleDb.get(designObject._id, function(err, body) {
     if (err) {
-        exampleDb.insert(designObject, function(err, body) { /*Defer or call callback*/ });
+        exampleDb.insert(designObject, function(err, body) { /* Resolve promise or call callback */ });
     } else {
         designObject._rev = body._rev;
-        exampleDb.insert(designObject, function(err, body) { /*Defer or call callback*/ })
+        exampleDb.insert(designObject, function(err, body) { /* Resolve promise or call callback */ })
     }
+});
+```
+
+### Step 3: Start adding your test data
+Adding lots of testing data with [nano](https://www.npmjs.com/package/nano) library and using callbacks can create callback hell. So I hope to create library
+which uses promises and interacts with [nano](https://www.npmjs.com/package/nano) library. But for now, you can use this approach to add data:
+
+``` javascript
+var exampleDb = nano.db.use('example_db');
+exampleDb.insert({data: "data"}, function(err, body) {
+    /* Resolve promise or add more data */
 });
 ```
